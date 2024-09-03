@@ -1,7 +1,7 @@
-requests==2.20.0
-APScheduler==3.1.0
-numpy==1.11.0
-scipy==0.17.0
-scikit-learn==0.17.1
-bigfloat==0.3.0
-pymongo==3.2.2
+requests
+APScheduler
+numpy
+scipy
+scikit-learn
+#bigfloat
+pymongo
