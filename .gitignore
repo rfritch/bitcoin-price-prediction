@@ -63,3 +63,6 @@ Data/
 
 #Ipython Notebook
 .ipynb_checkpoints
+binance_api_key.json
+/btcPredictor/Include
+/btcPredictor/share

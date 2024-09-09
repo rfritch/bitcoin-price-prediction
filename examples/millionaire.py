@@ -7,7 +7,7 @@ import pandas as pd
 from backtesting import Backtest, Strategy
 from backtesting.lib import SignalStrategy
 import pandas as pd
-from backtesting.lib import resample_apply
+#from backtesting.lib import resample_apply
 
 import matplotlib
 #plot the clusters
@@ -67,26 +67,55 @@ def findCentersWithEntropy(centers180, centers360, centers720):
     plot_clusters(kmeans720s)
     
  
+def resample_apply(df, rule, agg_dict):
+    """
+    Resample the DataFrame and apply aggregation functions.
+
+    Args:
+        df: A pandas DataFrame with a datetime index.
+        rule: A string representing the resampling frequency (e.g., '10S' for 10 seconds).
+        agg_dict: A dictionary where keys are column names and values are aggregation functions.
+
+    Returns:
+        A resampled and aggregated DataFrame.
+    """
+    return df.resample(rule).agg(agg_dict)
          
 
 def predict():
     
-    br = BayesianRegression()
+    br = BayesianRegression( )
     
     # Read the CSV file into a pandas DataFrame
-    df = pd.read_csv('BTCUSDC.csv', delimiter='|')
+    #df = pd.read_csv('BTCUSDC.csv', delimiter='|')
+    df = pd.read_csv('.\Data\BTCUSDC-1s-2024-06.csv')
+    df2 = pd.read_csv('.\Data\BTCUSDC-1s-2024-07.csv')
 
+    #append df2 to df
+    df = pd.concat( [df, df2], ignore_index=True)
+    
     # Print column names to verify 'Date' is present
     print("Columns in CSV:", df.columns)
 
     # Ensure the 'Date' column is parsed as datetime
     if 'Date' in df.columns:
         df['Date'] = pd.to_datetime(df['Date'], unit='ms')
+        df.set_index('Date', inplace=True)  # Set 'Date' as the index for resampling
+
     else:
         raise ValueError("'Date' column is not present in the CSV file")
+  
+    print(df.head())
+
+    #resample to 10seconds
+    #df = resample_apply(df, '10S', {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'})
+    
 
     # Verify the DataFrame
     print(df.head())
+    print(len(df))
+    
+        
 
     # Retrieve price, v_ask, and v_bid data points from the DataFrame.
     prices = df['Close'].tolist()
@@ -111,9 +140,9 @@ def predict():
 
     # Use the first time period (prices1) to generate all possible time series of
     # appropriate length (180, 360, and 720).
-    timeseries180 = br.generate_timeseries(prices1, 60)#180)
-    timeseries360 = br.generate_timeseries(prices1, 120)#360)
-    timeseries720 = br.generate_timeseries(prices1, 240)#720)
+    timeseries180 = br.generate_timeseries(prices1, 180)
+    timeseries360 = br.generate_timeseries(prices1, 360)
+    timeseries720 = br.generate_timeseries(prices1, 720)
 
     # Print the current time
     print("Current time before find cluster:", datetime.datetime.now())
@@ -121,7 +150,7 @@ def predict():
     ReEvaluate = False
     #check if cluster model is already saved 
     try:
-        with open('model_1minute.pkl', 'rb') as f:
+        with open('model_1s_07_2024.pkl', 'rb') as f:
             s1, s2, s3 = pickle.load(f)
     except:
         s1 = None
@@ -132,7 +161,7 @@ def predict():
         
         #open centers file
         try:
-            with open('centers_1minute.pkl', 'rb') as f:
+            with open('centers_1s_07_2024.pkl', 'rb') as f:
                 centers180, centers360, centers720 = pickle.load(f)
         except:
             centers180 = None
@@ -147,7 +176,7 @@ def predict():
             centers720 = br.find_cluster_centers(timeseries720, 100)
             
             #save centers 180, 360, 720 to file
-            with open('centers_1minute.pkl', 'wb') as f:
+            with open('centers_1s_07_2024.pkl', 'wb') as f:
                 pickle.dump((centers180, centers360, centers720), f)
                 
             #findCentersWithEntropy(centers180, centers360, centers720)
@@ -164,7 +193,7 @@ def predict():
             #plot_clusters(centers720)
 
             # Save the model to a file
-            with open('model_1minute.pkl', 'wb') as f:
+            with open('model_1s_07_2024.pkl', 'wb') as f:
                 pickle.dump((s1, s2, s3), f)
 
 
@@ -174,7 +203,7 @@ def predict():
 
     #check if cluster model is already saved 
     try:
-        with open('w_dpi_r_dp_object_1minute.pkl', 'rb') as f:
+        with open('w_dpi_r_dp_object_1s_07_2024.pkl', 'rb') as f:
             w, Dpi_r, Dp,  = pickle.load(f)
     except:
         w = None
@@ -195,7 +224,7 @@ def predict():
         w = br.find_parameters_w(Dpi_r, Dp)
 
         # Save the model to a file
-        with open('w_dpi_r_dp_object_1minute.pkl', 'wb') as f:
+        with open('w_dpi_r_dp_object_1s_07_2024.pkl', 'wb') as f:
             pickle.dump((w, Dpi_r, Dp), f)
         
         
@@ -204,7 +233,7 @@ def predict():
 
 
     try:
-        with open('dps_1minute.pkl', 'rb') as f:
+        with open('dps_1s_07_2024.pkl', 'rb') as f:
             dps = pickle.load(f)
     except:
         dps = None
@@ -215,7 +244,7 @@ def predict():
 
 
         # Save the model to a file
-        with open('dps_1minute.pkl', 'wb') as f:
+        with open('dps_1s_07_2024.pkl', 'wb') as f:
             pickle.dump(dps, f)  
             
               
@@ -236,11 +265,10 @@ def predict():
     # print("Last price:", last_price)
     # print("Price difference:", last_price - first_price)    
     
-    t = 1
+    t = .001
     max_bank_balance = 0
      # What's your  number?
     for i in range(10):
-        t += 1
         bank_balance = br.evaluate_performance(prices3, dps, t=t  , step=1)
         #max bank balance
         if bank_balance > max_bank_balance:
@@ -251,7 +279,7 @@ def predict():
             
         
         print('---------------------------------')
-        
+        t += t
 
     # print("Bank balance:", bank_balance)
     
@@ -261,14 +289,33 @@ def predict():
     
 
 #back test this strategy using bt
-predict()
+#predict()
 
 
     
 class BrStrat(Strategy):
     def init(self):
-        with open('dps_1minute.pkl', 'rb') as f:
+        with open('dps_1s_07_2024.pkl', 'rb') as f:
             dps = pickle.load(f)
+        
+        
+        #print statistics of dps 
+        print("Mean of dps:", np.mean(dps))
+        print("Standard deviation of dps:", np.std(dps))
+        print("Max of dps:", np.max(dps))
+        print("Min of dps:", np.min(dps))
+        print("Median of dps:", np.median(dps))
+        print("Variance of dps:", np.var(dps))
+        print("Sum of dps:", np.sum(dps))
+        print("Count of dps:", len(dps))
+        print("Skew of dps:", pd.Series(dps).skew())
+        print("Kurtosis of dps:", pd.Series(dps).kurtosis())
+        print("Quantile of dps:", pd.Series(dps).quantile([.25, .5, .75]))
+        print("Describe of dps:", pd.Series(dps).describe())
+        print("Correlation of dps:", pd.Series(dps).corr(pd.Series(dps)))
+        print("Covariance of dps:", pd.Series(dps).cov(pd.Series(dps)))
+        print("Autocorrelation of dps:", pd.Series(dps).autocorr())
+        print('Mode of dps:', pd.Series(dps).mode())
         
         self.dps = dps
         self.i = 0
@@ -298,16 +345,24 @@ class BrStrat(Strategy):
                   
     def next(self):
         
-        signal = self.evaluate_performance_single(self.dps[self.i], 1.4)   # .01)
-        if(signal == 'buy'):
-            self.buy()
-        elif(signal == 'sell'):
-            self.sell()
+        if((self.i % 60) == 0):
+            signal = self.evaluate_performance_single(self.dps[self.i], .05) # 1.4)   # .01)
+            if(signal == 'buy'):
+                self.buy()
+            elif(signal == 'sell'):
+                self.sell()
+                
         self.i += 1
             
 
 
-df = pd.read_csv('BTCUSDC.csv', delimiter='|')
+df = pd.read_csv('.\Data\BTCUSDC-1s-2024-06.csv')
+df2 = pd.read_csv('.\Data\BTCUSDC-1s-2024-07.csv')
+
+#append df2 to df
+df = pd.concat( [df, df2], ignore_index=True)
+
+#df = pd.read_csv('BTCUSDC.csv', delimiter='|')
 
 # Print column names to verify 'Date' is present
 print("Columns in CSV:", df.columns)
@@ -332,13 +387,14 @@ v_bid = df['Close'].tolist()
 df1, df2, df3 = np.array_split(df, 3)
 
 #start df3 at 720 and remove last row
-df1 = df1[720:-1]
+df3 = df3[720:-1]
         
-
-bt = Backtest(df1, BrStrat, cash=100000, commission=.00,  exclusive_orders=True)
+bt = Backtest(df3, BrStrat, cash=100000, commission=.00,  exclusive_orders=True)
 
 output = bt.run()
 
 
 print(output)
 #bt.plot()
+
+

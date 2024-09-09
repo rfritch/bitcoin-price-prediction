@@ -1,0 +1,6 @@
+2024-09-03 16:59:47,873 - INFO - getting last buy orders
+2024-09-03 16:59:47,967 - INFO - Weighted average price: 0
+2024-09-03 16:59:47,967 - INFO - buy orders
+2024-09-03 16:59:47,967 - INFO - []
+2024-09-03 16:59:48,605 - INFO - Websocket connected
+2024-09-03 16:59:48,605 - INFO - ### opened ###

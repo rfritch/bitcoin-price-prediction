@@ -1,3 +1,5 @@
+#adapted from   https://github.com/panditanvita/BTCpredictor/blob/master/ys_sampEntropy.m   author by YangSong 2010.11.16 C230
+
 import numpy as np
 
 def ys_sampEntropy(xdata):

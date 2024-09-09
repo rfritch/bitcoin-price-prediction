@@ -17,9 +17,9 @@ from concurrent.futures import ProcessPoolExecutor
 class BayesianRegression:
 
     def __init__(self):
-        self.timeseries1 = 60
-        self.timeseries2 = 120
-        self.timeseries3 = 240
+        self.timeseries1 = 180
+        self.timeseries2 = 360
+        self.timeseries3 = 720
         
     
     def generate_timeseries(self, prices, n):
@@ -193,7 +193,7 @@ class BayesianRegression:
         
         dps = []
         w0, w1, w2, w3, w4 = w
-        for i in range(lens3, len(prices) - 1):
+        for i in range(lens3 , len(prices) - 1 ):
             dp1 = self.predict_dpi(prices[i - lens1:i], s1)
             dp2 = self.predict_dpi(prices[i - lens2:i], s2)
             dp3 = self.predict_dpi(prices[i - lens3:i], s3)
