@@ -114,11 +114,16 @@ def create_candle(ws, message):
         # Fill in missing timestamps with previous candle data
         candles = candles.set_index('timestamp').asfreq('1s', method='ffill').reset_index()
 
+        #make sure candles are sorted by timestamp
+        #candles = candles.sort_values('timestamp')
+
         #make sure the candles data is only 10000 rows long
         candles = candles[-10000:]
         
+        
+        
         # Print the latest candle
-        print(candles.tail(1))
+        print(candles.tail(30))
 
         # Clear trades list for the next interval
         trades = []
@@ -248,6 +253,8 @@ def round_step_size_decimal(quantity: Union[float, Decimal], step_size: Union[fl
 
 # Global variables
 initial_buy_amount = None
+
+
 
 with open('model_1s_07_2024.pkl', 'rb') as f:
     s1, s2, s3 = pickle.load(f)

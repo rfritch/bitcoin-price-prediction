@@ -141,7 +141,12 @@ class BayesianRegression:
             dp1 = self.predict_dpi(prices[i - lens1:i], s1)
             dp2 = self.predict_dpi(prices[i - lens2:i], s2)
             dp3 = self.predict_dpi(prices[i - lens3:i], s3)
-            r = (v_bid[i] - v_ask[i]) / (v_bid[i] + v_ask[i])
+            
+            r= 0
+            if v_bid[i] + v_ask[i] != 0:
+                r = (v_bid[i] - v_ask[i]) / (v_bid[i] + v_ask[i])
+            
+            
             X[i - lens3, :] = [dp1, dp2, dp3, r]
             Y[i - lens3] = dp
         return X, Y
@@ -197,7 +202,11 @@ class BayesianRegression:
             dp1 = self.predict_dpi(prices[i - lens1:i], s1)
             dp2 = self.predict_dpi(prices[i - lens2:i], s2)
             dp3 = self.predict_dpi(prices[i - lens3:i], s3)
-            r = (v_bid[i] - v_ask[i]) / (v_bid[i] + v_ask[i])
+            
+            r= 0
+            if v_bid[i] + v_ask[i] != 0:
+                r = (v_bid[i] - v_ask[i]) / (v_bid[i] + v_ask[i])
+                
             dp = w0 + w1 * dp1 + w2 * dp2 + w3 * dp3 + w4 * r
             dps.append(float(dp))
         return dps

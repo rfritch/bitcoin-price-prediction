@@ -1,0 +1,137 @@
+Results of 10 second window across one year  2023-09 -2024-09
+
+in-price-prediction\btcPredictor\Scripts\python.exe' 'c:\Users\russf\.vscode\extensions\ms-python.debugpy-2024.10.0-win32-x64\bundled\libs\debugpy\adapter/../..\debugpy\launcher' '64245' '--' 'C:\Users\russf\OneDrive\Documents\SourceCode\bitcoin-price-prediction\examples\millionaire.py' 
+2023-09-01 00:00:04  25934.49  25934.49  25934.49  25934.49  0.00000  1693526404999           0.000000                 0           0.00000                     0.000000       0     0.00000         0.0        
+31622400
+C:\Users\russf\OneDrive\Documents\SourceCode\bitcoin-price-prediction\examples\millionaire.py:86: FutureWarning: 'S' is deprecated and will be removed in a future version, please use 's' instead.
+  return df.resample(rule).agg(agg_dict)
+                         Open      High       Low     Close   Volume  Bid Volume  Ask Volume
+Date
+2023-09-01 00:00:00  25930.84  25934.49  25930.84  25934.49  0.01224     0.01224         0.0
+2023-09-01 00:00:10  25934.49  25934.49  25931.35  25931.35  0.00555     0.00555         0.0
+2023-09-01 00:00:20  25931.35  25936.90  25931.35  25936.90  0.15822     0.15822         0.0
+2023-09-01 00:00:30  25936.90  25936.90  25936.90  25936.90  0.00000     0.00000         0.0
+2023-09-01 00:00:40  25936.90  25936.90  25936.90  25936.90  0.00000     0.00000         0.0
+3162240
+First few prices: [25934.49, 25931.35, 25936.9, 25936.9, 25936.9, 25936.9, 25936.9, 25936.9, 25936.9, 25925.42]
+Current time before find cluster: 2024-09-12 11:34:11.022903
+Current time before after cluster: 2024-09-12 11:34:11.028903
+Current time before find cluster: 2024-09-12 12:54:44.529656
+Current time before after find parameter: 2024-09-12 12:54:44.713687
+Max bank balance: 911591.1199996441
+Min bank balance: -57380.63999999999
+911583.5699996438
+-1
+852611.2999996438
+---------------------------------
+Max bank balance: 852611.2999996438
+Threshold: 0.001
+---------------------------------
+Max bank balance: 911315.0499996436
+Min bank balance: -57380.63999999999
+911307.4999996433
+-1
+852335.2299996433
+---------------------------------
+Max bank balance: 911172.3099996431
+Min bank balance: -57380.63999999999
+911164.7599996428
+-1
+852192.4899996428
+---------------------------------
+Max bank balance: 911421.629999642
+Min bank balance: -57381.60999999999
+911414.0799996417
+-1
+852441.8099996417
+---------------------------------
+Max bank balance: 911101.8999996444
+Min bank balance: -57348.60999999999
+911094.3499996441
+-1
+852122.0799996441
+---------------------------------
+Max bank balance: 911800.779999644
+Min bank balance: -57370.59999999999
+911793.2299996438
+-1
+852820.9599996437
+---------------------------------
+Max bank balance: 852820.9599996437
+Threshold: 0.032
+---------------------------------
+Max bank balance: 963644.9199996039
+Min bank balance: -57241.710000000014
+963644.9099996039
+-1
+904672.6399996039
+---------------------------------
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+---------------------------------
+Max bank balance: 965376.4899996051
+Min bank balance: -57166.40999999999
+965376.4799996051
+-1
+906404.2099996051
+---------------------------------
+Max bank balance: 906404.2099996051
+Threshold: 0.128
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+---------------------------------
+Max bank balance: 965376.4899996051
+Min bank balance: -57166.40999999999
+965376.4799996051
+-1
+906404.2099996051
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+---------------------------------
+Max bank balance: 965376.4899996051
+Min bank balance: -57166.40999999999
+965376.4799996051
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+---------------------------------
+Max bank balance: 965376.4899996051
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+---------------------------------
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+Max bank balance: 904672.6399996039
+Threshold: 0.064
+---------------------------------
+---------------------------------
+Max bank balance: 965376.4899996051
+Max bank balance: 965376.4899996051
+Min bank balance: -57166.40999999999
+965376.4799996051
+-1
+906404.2099996051
+---------------------------------
+Max bank balance: 906404.2099996051
+Threshold: 0.128
+---------------------------------
+Max bank balance: 969803.7699996082
+Min bank balance: -57166.40999999999
+969803.7599996082
+-1
+910831.4899996081
+---------------------------------
+Max bank balance: 910831.4899996081
+Threshold: 0.256
+---------------------------------
+Max bank balance: 960018.6799996272
+Min bank balance: -57150.43999999999
+960018.6699996272
+-1
+901046.3999996271
+---------------------------------

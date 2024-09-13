@@ -19,6 +19,10 @@ from bayesian_regression import *
 
 
 
+model_prefix = 'model_10s_09_2023_09_2024_08_'
+
+
+
 def plot_clusters(s):
     # Enable interactive mode
     plt.ion()
@@ -82,17 +86,85 @@ def resample_apply(df, rule, agg_dict):
     return df.resample(rule).agg(agg_dict)
          
 
+def standardize_columns(df, standard_columns):
+    # Assign standard column names
+    df.columns = standard_columns
+    return df
+
+def align_columns(df_list, standard_columns):
+    # Ensure all DataFrames have the same columns
+    for i, df in enumerate(df_list):
+        df_list[i] = standardize_columns(df, standard_columns)
+    return df_list
+
+def create_df():
+    # Define standard column names
+    standard_columns = [
+        'Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close time',
+        'Base asset volume', 'Number of trades', 'Taker buy volume',
+        'Taker buy base asset volume', 'Ignore'
+    ]
+
+    # Read the CSV files into pandas DataFrames without headers
+    df_list = [
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2023-09.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2023-10.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2023-11.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2023-12.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-01.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-02.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-03.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-04.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-05.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-06.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-07.csv', header=None),
+        pd.read_csv('.\\Data\\BTCUSDC-1s-2024-08.csv', header=None)
+    ]
+
+    # Align columns across all DataFrames
+    df_list = align_columns(df_list, standard_columns)
+
+    # Concatenate DataFrames row-wise
+    df_concat = pd.concat(df_list, ignore_index=True)
+
+    # Print the shape of the concatenated DataFrame
+    print("Shape of concatenated DataFrame:", df_concat.shape)
+
+    return df_concat
+    
+    
+
 def predict():
     
     br = BayesianRegression( )
-    
-    # Read the CSV file into a pandas DataFrame
-    #df = pd.read_csv('BTCUSDC.csv', delimiter='|')
-    df = pd.read_csv('.\Data\BTCUSDC-1s-2024-06.csv')
-    df2 = pd.read_csv('.\Data\BTCUSDC-1s-2024-07.csv')
 
+    df =create_df()
+    
     #append df2 to df
-    df = pd.concat( [df, df2], ignore_index=True)
+    #df = pd.concat( [df, df2], ignore_index=True)
+    
+    # 1591258320000,      	// Open time
+    # "9640.7",       	 	// Open
+    # "9642.4",       	 	// High
+    # "9640.6",       	 	// Low
+    # "9642.0",      	 	 	// Close (or latest price)
+    # "206", 			 		// Volume
+    # 1591258379999,       	// Close time
+    # "2.13660389",    		// Base asset volume
+    # 48,             		// Number of trades
+    # "119",    				// Taker buy volume
+    # "1.23424865",      		// Taker buy base asset volume
+    # "0" 					// Ignore.
+        
+    #assign column names
+    #df.columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'CloseTime', 'QuoteAssetVolume', 'NumberOfTrades', 'TakerBuyBaseAssetVolume', 'TakerBuyQuoteAssetVolume', 'Ignore']
+    
+    # Calculate Bid Volume (Taker buy volume)
+    df['Bid Volume'] = df['Taker buy volume'].astype(float)
+
+    # Calculate Ask Volume (Total volume - Taker buy volume)
+    df['Ask Volume'] = df['Volume'].astype(float) - df['Taker buy volume'].astype(float)
+ 
     
     # Print column names to verify 'Date' is present
     print("Columns in CSV:", df.columns)
@@ -104,23 +176,28 @@ def predict():
 
     else:
         raise ValueError("'Date' column is not present in the CSV file")
+
+    #ensure sorted by date
+    df = df.sort_values(by='Date')
   
     print(df.head())
+    print(len(df))
 
     #resample to 10seconds
-    #df = resample_apply(df, '10S', {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'})
+    df = resample_apply(df, '10S', {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum', 'Bid Volume': 'sum', 'Ask Volume': 'sum'})
     
+
+
 
     # Verify the DataFrame
     print(df.head())
     print(len(df))
-    
-        
+            
 
     # Retrieve price, v_ask, and v_bid data points from the DataFrame.
     prices = df['Close'].tolist()
-    v_ask = df['Open'].tolist()
-    v_bid = df['Close'].tolist()
+    v_ask = df['Ask Volume'].tolist()
+    v_bid = df['Bid Volume'].tolist()
 
 
     # Print the first few prices to verify
@@ -147,10 +224,11 @@ def predict():
     # Print the current time
     print("Current time before find cluster:", datetime.datetime.now())
 
+
     ReEvaluate = False
     #check if cluster model is already saved 
     try:
-        with open('model_1s_07_2024.pkl', 'rb') as f:
+        with open( model_prefix + 's1_s2_s3.pkl', 'rb') as f:
             s1, s2, s3 = pickle.load(f)
     except:
         s1 = None
@@ -161,7 +239,7 @@ def predict():
         
         #open centers file
         try:
-            with open('centers_1s_07_2024.pkl', 'rb') as f:
+            with open( model_prefix +  'centers.pkl', 'rb') as f:
                 centers180, centers360, centers720 = pickle.load(f)
         except:
             centers180 = None
@@ -176,7 +254,7 @@ def predict():
             centers720 = br.find_cluster_centers(timeseries720, 100)
             
             #save centers 180, 360, 720 to file
-            with open('centers_1s_07_2024.pkl', 'wb') as f:
+            with open(model_prefix +  'centers.pkl', 'wb') as f:
                 pickle.dump((centers180, centers360, centers720), f)
                 
             #findCentersWithEntropy(centers180, centers360, centers720)
@@ -193,7 +271,7 @@ def predict():
             #plot_clusters(centers720)
 
             # Save the model to a file
-            with open('model_1s_07_2024.pkl', 'wb') as f:
+            with open(model_prefix + 's1_s2_s3.pkl', 'wb') as f:
                 pickle.dump((s1, s2, s3), f)
 
 
@@ -203,7 +281,7 @@ def predict():
 
     #check if cluster model is already saved 
     try:
-        with open('w_dpi_r_dp_object_1s_07_2024.pkl', 'rb') as f:
+        with open( model_prefix + 'w_dpi_r_dp.pkl', 'rb') as f:
             w, Dpi_r, Dp,  = pickle.load(f)
     except:
         w = None
@@ -224,7 +302,7 @@ def predict():
         w = br.find_parameters_w(Dpi_r, Dp)
 
         # Save the model to a file
-        with open('w_dpi_r_dp_object_1s_07_2024.pkl', 'wb') as f:
+        with open(model_prefix + 'w_dpi_r_dp.pkl', 'wb') as f:
             pickle.dump((w, Dpi_r, Dp), f)
         
         
@@ -233,7 +311,7 @@ def predict():
 
 
     try:
-        with open('dps_1s_07_2024.pkl', 'rb') as f:
+        with open( model_prefix + 'dps.pkl', 'rb') as f:
             dps = pickle.load(f)
     except:
         dps = None
@@ -244,7 +322,7 @@ def predict():
 
 
         # Save the model to a file
-        with open('dps_1s_07_2024.pkl', 'wb') as f:
+        with open( model_prefix + 'dps.pkl', 'wb') as f:
             pickle.dump(dps, f)  
             
               
@@ -295,9 +373,8 @@ def predict():
     
 class BrStrat(Strategy):
     def init(self):
-        with open('dps_1s_07_2024.pkl', 'rb') as f:
+        with open(model_prefix + 'dps.pkl', 'rb') as f:
             dps = pickle.load(f)
-        
         
         #print statistics of dps 
         print("Mean of dps:", np.mean(dps))
@@ -344,25 +421,20 @@ class BrStrat(Strategy):
             return 'hold'      
                   
     def next(self):
-        
-        if((self.i % 60) == 0):
-            signal = self.evaluate_performance_single(self.dps[self.i], .05) # 1.4)   # .01)
-            if(signal == 'buy'):
-                self.buy()
-            elif(signal == 'sell'):
-                self.sell()
+        if(self.i >= len(self.dps)):
+            return 
+         
+        signal = self.evaluate_performance_single(self.dps[self.i], .256) # 1.4)   # .01)
+        if(signal == 'buy'):
+            self.buy()
+        elif(signal == 'sell'):
+            self.sell()
                 
         self.i += 1
             
 
 
-df = pd.read_csv('.\Data\BTCUSDC-1s-2024-06.csv')
-df2 = pd.read_csv('.\Data\BTCUSDC-1s-2024-07.csv')
-
-#append df2 to df
-df = pd.concat( [df, df2], ignore_index=True)
-
-#df = pd.read_csv('BTCUSDC.csv', delimiter='|')
+df = create_df()
 
 # Print column names to verify 'Date' is present
 print("Columns in CSV:", df.columns)
@@ -370,18 +442,30 @@ print("Columns in CSV:", df.columns)
 # Ensure the 'Date' column is parsed as datetime
 if 'Date' in df.columns:
     df['Date'] = pd.to_datetime(df['Date'], unit='ms')
+    df.set_index('Date', inplace=True)  # Set 'Date' as the index for resampling
 else:
     raise ValueError("'Date' column is not present in the CSV file")
+
+
+#ensure sorted by date
+df = df.sort_values(by='Date')
+
+print(df.head())
+print(len(df))
+
+#resample to 10seconds
+df = resample_apply(df, '10S', {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'})
+
 
 # Verify the DataFrame
 print(df.head())
 
+
+
 prices = df['Close'].tolist()
-v_ask = df['Open'].tolist()
-v_bid = df['Close'].tolist()
 [prices1, prices2, prices3] = np.array_split(prices, 3)
-[v_bid1, v_bid2, v_bid3] = np.array_split(v_bid, 3)
-[v_ask1, v_ask2, v_ask3] = np.array_split(v_ask, 3)
+
+
 
 #split df into 3 parts
 df1, df2, df3 = np.array_split(df, 3)
@@ -393,8 +477,9 @@ bt = Backtest(df3, BrStrat, cash=100000, commission=.00,  exclusive_orders=True)
 
 output = bt.run()
 
-
 print(output)
+
+
 #bt.plot()
 
 
