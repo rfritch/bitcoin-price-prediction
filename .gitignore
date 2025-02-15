@@ -59,7 +59,9 @@ docs/_build/
 target/
 
 Scripts/
-Data/
+Data/*.csv
+Data/*.zip
+
 
 #Ipython Notebook
 .ipynb_checkpoints

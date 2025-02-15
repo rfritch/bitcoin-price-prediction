@@ -19,7 +19,7 @@ from bayesian_regression import *
 
 
 
-model_prefix = 'model_10s_09_2023_09_2024_08_'
+model_prefix = 'model_5m_09_2023_09_2024_08_'
 
 
 
@@ -184,7 +184,7 @@ def predict():
     print(len(df))
 
     #resample to 10seconds
-    df = resample_apply(df, '10S', {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum', 'Bid Volume': 'sum', 'Ask Volume': 'sum'})
+    df = resample_apply(df, '5m', {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum', 'Bid Volume': 'sum', 'Ask Volume': 'sum'})
     
 
 

@@ -1,4 +1,7 @@
 
+
+from datetime import datetime, timedelta
+
 import pickle
 from bayesian_regression import *
 import json
@@ -13,6 +16,8 @@ from binance.client import Client
 from binance.enums import *
 from binance.helpers import round_step_size
 from decimal import ROUND_DOWN, Decimal
+
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='BR_bot_log.txt')
@@ -41,7 +46,6 @@ USD_STEP_SIZE = 0.01
 MIN_NOTIONAL = .00001
 MAX_CANDLES = 1000
 SMA_99 = 99
-#candles = []
 in_position = False
 buy_orders = []
 
@@ -61,13 +65,93 @@ candle_interval = 60
 trades = []
 
 # Initialize an empty DataFrame to store the candle data
-candles = pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+candles = pd.DataFrame(columns=['timestamp', 'end_time', 'open', 'high', 'low', 'close', 'volume'])
+candles1s = pd.DataFrame(columns=['timestamp', 'end_time', 'open', 'high', 'low', 'close', 'volume'])
 
 # Symbol to track
 symbol = "btcusdc"
 
-def create_candle(ws, message):
-    global trades, order_book, candles
+
+
+# Initialize variables
+current_candle = None
+
+
+def makeCandleFromTrade(message):
+    # Parse the received message
+    data = json.loads(message)
+    current_candle = None
+    
+    # Handle trade data
+    if 'e' in data and data['e'] == 'trade':
+        trade = {
+            'timestamp':  data['T'] ,
+            'price': float(data['p']),
+            'quantity': float(data['q']),
+            'is_buyer_maker': data['m']  # True if the buyer is the market maker
+        }
+
+        current_candle = {
+            'timestamp': trade['timestamp'],
+            'open': trade['price'],
+            'high': trade['price'],
+            'low': trade['price'],
+            'close': trade['price'],
+            'volume': trade['quantity'],
+            'bid_volume': 0,
+            'ask_volume': 0
+        }
+        
+        if trade['is_buyer_maker']:
+            current_candle['bid_volume'] += trade['quantity']
+        else:
+            current_candle['ask_volume'] += trade['quantity']
+    
+    return current_candle
+
+
+def create_candle2(message):
+    global current_candle, candles, candles1s
+
+    current_candle = makeCandleFromTrade(message)
+    
+    if(current_candle is not None):
+        
+        # Convert timestamp to datetime
+        current_candle_df = pd.DataFrame([current_candle])
+        current_candle_df['timestamp'] = pd.to_datetime(current_candle_df['timestamp'], unit='ms')
+        current_candle_df.set_index('timestamp', inplace=True)     
+            
+        #concat to candles
+        candles1s = pd.concat([candles1s, current_candle_df], ignore_index=False)
+        #print(candles1s)
+        
+        if len(candles1s) > 2 :    
+            #resample to 10s
+            candles = candles1s.resample('10s').agg({
+                'open': 'first',
+                'high': 'max',
+                'low': 'min',
+                'close': 'last',
+                'volume': 'sum',
+                'bid_volume': 'sum',
+                'ask_volume': 'sum'
+            })
+            
+            #fill NaN values with the previous value
+            candles.ffill(inplace=True)
+            
+            #print the last candle
+            if len(candles) > 10:
+                print(candles.tail(10))
+                
+                
+            return candles
+    
+    return None
+
+def create_candle(message):
+    global trades, candles
 
     # Parse the received message
     data = json.loads(message)
@@ -77,59 +161,72 @@ def create_candle(ws, message):
         trade = {
             'timestamp': data['T'],
             'price': float(data['p']),
-            'quantity': float(data['q'])
+            'quantity': float(data['q']),
+            'is_buyer_maker': data['m']  # True if the buyer is the market maker
         }
         trades.append(trade)
         
+        # Keep only the last 10000 trades
         trades = trades[-10000:]
 
-    #if the trade info is the same as the last trade info then  increment timestamp by 1 second 
-    #this is to make sure that the timestamp is unique
-    if len(trades) > 1 and trades[-1]['timestamp'] == trades[-2]['timestamp']:
-        trades[-1]['timestamp'] += 1000
-
-    # Aggregate trades into 1s candles
-    if trades:
+    # Aggregate trades into 10s candles
+    # Make sure we have at least 10 seconds of trade data before we start aggregating
+    if len(trades) > 0:
+    
         # Convert timestamp to datetime
         trades_df = pd.DataFrame(trades)
         trades_df['timestamp'] = pd.to_datetime(trades_df['timestamp'], unit='ms')
+        trades_df.set_index('timestamp', inplace=True)
         
-        # Resample to 1-second intervals
-        resampled_data = trades_df.set_index('timestamp').resample('1s').agg({
-            'price': ['first', 'max', 'min', 'last'],
-            'quantity': 'sum'
+        # Calculate bid and ask volumes
+        trades_df['bid_volume'] = trades_df.apply(lambda row: row['quantity'] if row['is_buyer_maker'] else 0, axis=1)
+        trades_df['ask_volume'] = trades_df.apply(lambda row: row['quantity'] if not row['is_buyer_maker'] else 0, axis=1)
+        
+        # Resample to 10-second intervals
+        resampled_data = trades_df.resample('10s').agg({
+            'price': 'ohlc',
+            'quantity': 'sum',
+            'bid_volume': 'sum',
+            'ask_volume': 'sum'
         })
-
+        
         # Flatten the MultiIndex columns
-        resampled_data.columns = ['open', 'high', 'low', 'close', 'volume']
-
-        # Reset index to get timestamp as a column
-        resampled_data = resampled_data.reset_index()
-
-        # Append the new candle data to the candles DataFrame
-        candles = pd.concat([candles, resampled_data])
+        resampled_data.columns = ['_'.join(col).strip() for col in resampled_data.columns.values]
         
-        candles = candles.drop_duplicates(subset='timestamp')
+        # Fill NaN values with the previous value
+        resampled_data.fillna(method='ffill', inplace=True)
         
-        # Fill in missing timestamps with previous candle data
-        candles = candles.set_index('timestamp').asfreq('1s', method='ffill').reset_index()
-
-        #make sure candles are sorted by timestamp
-        #candles = candles.sort_values('timestamp')
-
-        #make sure the candles data is only 10000 rows long
-        candles = candles[-10000:]
+        # Convert resampled data to dictionary and append to candles
+        new_candles = []
+        for index, row in resampled_data.iterrows():
+            candle = {
+                'timestamp': index,
+                'open': row['price_open'],
+                'high': row['price_high'],
+                'low': row['price_low'],
+                'close': row['price_close'],
+                'volume': row['quantity_quantity'],
+                'bid_volume': row['bid_volume_bid_volume'],
+                'ask_volume': row['ask_volume_ask_volume']
+            }
+            new_candles.append(candle)
         
+        # Convert new candles to DataFrame
+        new_candles_df = pd.DataFrame(new_candles)
         
+        # Append new candles if they are not duplicates
+        if not candles.empty:
+            last_timestamp = candles['timestamp'].max()
+            new_candles_df = new_candles_df[new_candles_df['timestamp'] > last_timestamp]
         
-        # Print the latest candle
-        print(candles.tail(30))
-
-        # Clear trades list for the next interval
-        trades = []
-    
-    return candles
-
+        if not new_candles_df.empty:
+            candles = pd.concat([candles, new_candles_df], ignore_index=True)
+        
+        # Print the latest candles
+        if len(candles) > 10:
+            print(candles.tail(10))
+        else:
+            print(candles)
 
 
 
@@ -256,10 +353,13 @@ initial_buy_amount = None
 
 
 
-with open('model_1s_07_2024.pkl', 'rb') as f:
+model_prefix = 'model_10s_09_2023_09_2024_08_'
+
+
+with open(model_prefix + 's1_s2_s3.pkl', 'rb') as f:
     s1, s2, s3 = pickle.load(f)
 
-with open('w_dpi_r_dp_object_1s_07_2024.pkl', 'rb') as f:
+with open(model_prefix + 'w_dpi_r_dp.pkl', 'rb') as f:
     w, Dpi_r, Dp,  = pickle.load(f)
 
 
@@ -268,10 +368,14 @@ def predict_price(prices, v_bid, v_ask):
     
     # Predict average price changes over the third time period.
     dps = br.predict_dps(prices, v_bid, v_ask, s1, s2, s3, w)
+    
+    if(len(dps) == 0):
+        return 'hold'
+    
     logging.info(f"Predicted price change: {dps[-1]}")    
-    if dps[-1] > .05:
+    if dps[-1] > .256:
         return 'buy'
-    elif dps[-1] < -.05:
+    elif dps[-1] < -.256:
         return 'sell'
     else:
         return 'hold'   
@@ -282,22 +386,25 @@ def predict_price(prices, v_bid, v_ask):
 def on_message(ws, message):
     global  in_position, buy_orders, initial_buy_amount
     
-    candles = create_candle(ws, message)
+    candle10s = create_candle2( message)
 
-    if(len(candles) < 721):
+    if(candle10s is None):
+        return
+
+    if(len(candle10s) < 721):
         return
     
-    last_price = candles['close'].iloc[-1]
+    last_price = candle10s['close'].iloc[-1]
   
     # Slicing the 'close' column for the last 722 elements
-    last_720_closes = candles['close'][-722:]
-    last_720_closes = last_720_closes.reset_index(drop=True)
-   
-    last_720_opens = candles['open'][-722:]
-    last_720_opens = last_720_opens.reset_index(drop=True)
+    last_720_closes = candle10s['close'][-722:]
+    #last_720_closes = last_720_closes.reset_index(drop=True)
+
+    last_720_bid_volume = candle10s['bid_volume'][-722:]
+    last_720_ask_volume = candle10s['ask_volume'][-722:]
 
   
-    signal = predict_price(last_720_closes , last_720_closes, last_720_opens)
+    signal = predict_price(last_720_closes , last_720_bid_volume, last_720_ask_volume)
     logging.info(f"Signal: {signal}  ")
     if signal == 'sell' and in_position:
         logging.info("Overbought! Sell! Sell! Sell!") 

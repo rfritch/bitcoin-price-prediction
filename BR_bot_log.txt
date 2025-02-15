@@ -27268,3 +27268,276 @@
 2024-09-05 14:20:56,310 - INFO - 0.00094969 btc balance is greater than min notional
 2024-09-05 14:20:56,914 - INFO - Websocket connected
 2024-09-05 14:20:56,914 - INFO - ### opened ###
+2024-09-12 17:37:37,310 - INFO - getting last buy orders
+2024-09-12 17:37:37,416 - INFO - Weighted average price: 0
+2024-09-12 17:37:37,417 - INFO - buy orders
+2024-09-12 17:37:37,417 - INFO - []
+2024-09-12 17:37:37,503 - INFO - 2e-05 btc balance is greater than min notional
+2024-09-12 17:37:38,172 - INFO - Websocket connected
+2024-09-12 17:37:38,172 - INFO - ### opened ###
+2024-09-12 17:39:23,582 - INFO - getting last buy orders
+2024-09-12 17:39:23,695 - INFO - Weighted average price: 0
+2024-09-12 17:39:23,695 - INFO - buy orders
+2024-09-12 17:39:23,696 - INFO - []
+2024-09-12 17:39:23,777 - INFO - 2e-05 btc balance is greater than min notional
+2024-09-12 17:39:24,366 - INFO - Websocket connected
+2024-09-12 17:39:24,367 - INFO - ### opened ###
+2024-09-12 17:44:29,525 - INFO - getting last buy orders
+2024-09-12 17:44:29,620 - INFO - Weighted average price: 0
+2024-09-12 17:44:29,621 - INFO - buy orders
+2024-09-12 17:44:29,621 - INFO - []
+2024-09-12 17:44:29,704 - INFO - 2e-05 btc balance is greater than min notional
+2024-09-12 17:44:30,341 - INFO - Websocket connected
+2024-09-12 17:44:30,341 - INFO - ### opened ###
+2024-09-18 09:05:27,599 - INFO - getting last buy orders
+2024-09-18 09:05:27,695 - INFO - Weighted average price: 0
+2024-09-18 09:05:27,696 - INFO - buy orders
+2024-09-18 09:05:27,696 - INFO - []
+2024-09-18 09:05:27,779 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:05:28,389 - INFO - Websocket connected
+2024-09-18 09:05:28,390 - INFO - ### opened ###
+2024-09-18 09:06:47,345 - INFO - getting last buy orders
+2024-09-18 09:06:47,436 - INFO - Weighted average price: 0
+2024-09-18 09:06:47,437 - INFO - buy orders
+2024-09-18 09:06:47,437 - INFO - []
+2024-09-18 09:06:47,518 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:06:48,100 - INFO - Websocket connected
+2024-09-18 09:06:48,100 - INFO - ### opened ###
+2024-09-18 09:08:27,188 - INFO - getting last buy orders
+2024-09-18 09:08:27,282 - INFO - Weighted average price: 0
+2024-09-18 09:08:27,282 - INFO - buy orders
+2024-09-18 09:08:27,283 - INFO - []
+2024-09-18 09:08:27,367 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:08:28,012 - INFO - Websocket connected
+2024-09-18 09:08:28,012 - INFO - ### opened ###
+2024-09-18 09:12:29,747 - INFO - getting last buy orders
+2024-09-18 09:12:29,834 - INFO - Weighted average price: 0
+2024-09-18 09:12:29,835 - INFO - buy orders
+2024-09-18 09:12:29,835 - INFO - []
+2024-09-18 09:12:29,917 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:12:30,563 - INFO - Websocket connected
+2024-09-18 09:12:30,564 - INFO - ### opened ###
+2024-09-18 09:12:43,899 - INFO - getting last buy orders
+2024-09-18 09:12:43,992 - INFO - Weighted average price: 0
+2024-09-18 09:12:43,992 - INFO - buy orders
+2024-09-18 09:12:43,993 - INFO - []
+2024-09-18 09:12:44,078 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:12:44,701 - INFO - Websocket connected
+2024-09-18 09:12:44,701 - INFO - ### opened ###
+2024-09-18 09:14:27,016 - INFO - getting last buy orders
+2024-09-18 09:14:27,106 - INFO - Weighted average price: 0
+2024-09-18 09:14:27,107 - INFO - buy orders
+2024-09-18 09:14:27,107 - INFO - []
+2024-09-18 09:14:27,191 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:14:27,816 - INFO - Websocket connected
+2024-09-18 09:14:27,817 - INFO - ### opened ###
+2024-09-18 09:18:16,620 - INFO - getting last buy orders
+2024-09-18 09:18:16,717 - INFO - Weighted average price: 0
+2024-09-18 09:18:16,717 - INFO - buy orders
+2024-09-18 09:18:16,717 - INFO - []
+2024-09-18 09:18:16,799 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:18:17,446 - INFO - Websocket connected
+2024-09-18 09:18:17,447 - INFO - ### opened ###
+2024-09-18 09:24:42,249 - INFO - getting last buy orders
+2024-09-18 09:24:42,354 - INFO - Weighted average price: 0
+2024-09-18 09:24:42,354 - INFO - buy orders
+2024-09-18 09:24:42,355 - INFO - []
+2024-09-18 09:24:42,439 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:24:43,047 - INFO - Websocket connected
+2024-09-18 09:24:43,048 - INFO - ### opened ###
+2024-09-18 09:39:57,914 - INFO - getting last buy orders
+2024-09-18 09:39:58,010 - INFO - Weighted average price: 0
+2024-09-18 09:39:58,010 - INFO - buy orders
+2024-09-18 09:39:58,012 - INFO - []
+2024-09-18 09:39:58,092 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:39:58,694 - INFO - Websocket connected
+2024-09-18 09:39:58,695 - INFO - ### opened ###
+2024-09-18 09:53:34,196 - INFO - getting last buy orders
+2024-09-18 09:53:34,290 - INFO - Weighted average price: 0
+2024-09-18 09:53:34,290 - INFO - buy orders
+2024-09-18 09:53:34,290 - INFO - []
+2024-09-18 09:53:34,378 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:53:36,044 - INFO - Websocket connected
+2024-09-18 09:53:36,045 - INFO - ### opened ###
+2024-09-18 09:58:32,647 - INFO - getting last buy orders
+2024-09-18 09:58:32,741 - INFO - Weighted average price: 0
+2024-09-18 09:58:32,741 - INFO - buy orders
+2024-09-18 09:58:32,741 - INFO - []
+2024-09-18 09:58:32,832 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 09:58:33,450 - INFO - Websocket connected
+2024-09-18 09:58:33,451 - INFO - ### opened ###
+2024-09-18 10:04:38,662 - INFO - getting last buy orders
+2024-09-18 10:04:38,749 - INFO - Weighted average price: 0
+2024-09-18 10:04:38,749 - INFO - buy orders
+2024-09-18 10:04:38,749 - INFO - []
+2024-09-18 10:04:38,829 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 10:04:39,463 - INFO - Websocket connected
+2024-09-18 10:04:39,464 - INFO - ### opened ###
+2024-09-18 12:01:26,472 - INFO - getting last buy orders
+2024-09-18 12:01:26,688 - INFO - Weighted average price: 0
+2024-09-18 12:01:26,689 - INFO - buy orders
+2024-09-18 12:01:26,689 - INFO - []
+2024-09-18 12:01:26,771 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:01:27,431 - INFO - Websocket connected
+2024-09-18 12:01:27,432 - INFO - ### opened ###
+2024-09-18 12:02:01,930 - INFO - getting last buy orders
+2024-09-18 12:02:02,017 - INFO - Weighted average price: 0
+2024-09-18 12:02:02,018 - INFO - buy orders
+2024-09-18 12:02:02,018 - INFO - []
+2024-09-18 12:02:02,099 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:02:02,705 - INFO - Websocket connected
+2024-09-18 12:02:02,705 - INFO - ### opened ###
+2024-09-18 12:05:06,149 - INFO - getting last buy orders
+2024-09-18 12:05:06,239 - INFO - Weighted average price: 0
+2024-09-18 12:05:06,239 - INFO - buy orders
+2024-09-18 12:05:06,239 - INFO - []
+2024-09-18 12:05:06,321 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:05:06,950 - INFO - Websocket connected
+2024-09-18 12:05:06,951 - INFO - ### opened ###
+2024-09-18 12:06:36,863 - INFO - getting last buy orders
+2024-09-18 12:06:36,960 - INFO - Weighted average price: 0
+2024-09-18 12:06:36,961 - INFO - buy orders
+2024-09-18 12:06:36,961 - INFO - []
+2024-09-18 12:06:37,045 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:06:37,620 - INFO - Websocket connected
+2024-09-18 12:06:37,621 - INFO - ### opened ###
+2024-09-18 12:07:22,731 - INFO - getting last buy orders
+2024-09-18 12:07:22,826 - INFO - Weighted average price: 0
+2024-09-18 12:07:22,827 - INFO - buy orders
+2024-09-18 12:07:22,827 - INFO - []
+2024-09-18 12:07:22,913 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:07:23,479 - INFO - Websocket connected
+2024-09-18 12:07:23,480 - INFO - ### opened ###
+2024-09-18 12:09:04,708 - INFO - getting last buy orders
+2024-09-18 12:09:04,800 - INFO - Weighted average price: 0
+2024-09-18 12:09:04,800 - INFO - buy orders
+2024-09-18 12:09:04,800 - INFO - []
+2024-09-18 12:09:04,884 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:09:05,462 - INFO - Websocket connected
+2024-09-18 12:09:05,462 - INFO - ### opened ###
+2024-09-18 12:12:39,867 - INFO - getting last buy orders
+2024-09-18 12:12:39,970 - INFO - Weighted average price: 0
+2024-09-18 12:12:39,970 - INFO - buy orders
+2024-09-18 12:12:39,970 - INFO - []
+2024-09-18 12:12:40,057 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:12:40,727 - INFO - Websocket connected
+2024-09-18 12:12:40,728 - INFO - ### opened ###
+2024-09-18 12:15:36,033 - INFO - getting last buy orders
+2024-09-18 12:15:36,247 - INFO - Weighted average price: 0
+2024-09-18 12:15:36,248 - INFO - buy orders
+2024-09-18 12:15:36,248 - INFO - []
+2024-09-18 12:15:36,331 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:15:36,968 - INFO - Websocket connected
+2024-09-18 12:15:36,969 - INFO - ### opened ###
+2024-09-18 12:16:29,326 - INFO - getting last buy orders
+2024-09-18 12:16:29,412 - INFO - Weighted average price: 0
+2024-09-18 12:16:29,413 - INFO - buy orders
+2024-09-18 12:16:29,413 - INFO - []
+2024-09-18 12:16:29,494 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:16:30,114 - INFO - Websocket connected
+2024-09-18 12:16:30,115 - INFO - ### opened ###
+2024-09-18 12:17:46,745 - INFO - getting last buy orders
+2024-09-18 12:17:46,836 - INFO - Weighted average price: 0
+2024-09-18 12:17:46,836 - INFO - buy orders
+2024-09-18 12:17:46,836 - INFO - []
+2024-09-18 12:17:46,918 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:17:47,515 - INFO - Websocket connected
+2024-09-18 12:17:47,516 - INFO - ### opened ###
+2024-09-18 12:19:57,426 - INFO - getting last buy orders
+2024-09-18 12:19:57,517 - INFO - Weighted average price: 0
+2024-09-18 12:19:57,517 - INFO - buy orders
+2024-09-18 12:19:57,517 - INFO - []
+2024-09-18 12:19:57,604 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:19:58,202 - INFO - Websocket connected
+2024-09-18 12:19:58,203 - INFO - ### opened ###
+2024-09-18 12:32:09,736 - INFO - getting last buy orders
+2024-09-18 12:32:09,836 - INFO - Weighted average price: 0
+2024-09-18 12:32:09,836 - INFO - buy orders
+2024-09-18 12:32:09,836 - INFO - []
+2024-09-18 12:32:09,923 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:32:10,561 - INFO - Websocket connected
+2024-09-18 12:32:10,561 - INFO - ### opened ###
+2024-09-18 12:35:41,018 - INFO - getting last buy orders
+2024-09-18 12:35:41,111 - INFO - Weighted average price: 0
+2024-09-18 12:35:41,111 - INFO - buy orders
+2024-09-18 12:35:41,111 - INFO - []
+2024-09-18 12:35:41,194 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:35:41,799 - INFO - Websocket connected
+2024-09-18 12:35:41,800 - INFO - ### opened ###
+2024-09-18 12:37:22,379 - INFO - getting last buy orders
+2024-09-18 12:37:22,466 - INFO - Weighted average price: 0
+2024-09-18 12:37:22,467 - INFO - buy orders
+2024-09-18 12:37:22,467 - INFO - []
+2024-09-18 12:37:22,555 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:37:23,201 - INFO - Websocket connected
+2024-09-18 12:37:23,201 - INFO - ### opened ###
+2024-09-18 12:37:46,358 - INFO - getting last buy orders
+2024-09-18 12:37:46,454 - INFO - Weighted average price: 0
+2024-09-18 12:37:46,454 - INFO - buy orders
+2024-09-18 12:37:46,454 - INFO - []
+2024-09-18 12:37:46,540 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:37:47,181 - INFO - Websocket connected
+2024-09-18 12:37:47,181 - INFO - ### opened ###
+2024-09-18 12:38:09,500 - INFO - getting last buy orders
+2024-09-18 12:38:09,598 - INFO - Weighted average price: 0
+2024-09-18 12:38:09,599 - INFO - buy orders
+2024-09-18 12:38:09,599 - INFO - []
+2024-09-18 12:38:09,682 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:38:10,275 - INFO - Websocket connected
+2024-09-18 12:38:10,275 - INFO - ### opened ###
+2024-09-18 12:41:10,065 - INFO - getting last buy orders
+2024-09-18 12:41:10,158 - INFO - Weighted average price: 0
+2024-09-18 12:41:10,158 - INFO - buy orders
+2024-09-18 12:41:10,159 - INFO - []
+2024-09-18 12:41:10,240 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:41:10,896 - INFO - Websocket connected
+2024-09-18 12:41:10,896 - INFO - ### opened ###
+2024-09-18 12:44:22,637 - INFO - getting last buy orders
+2024-09-18 12:44:22,726 - INFO - Weighted average price: 0
+2024-09-18 12:44:22,726 - INFO - buy orders
+2024-09-18 12:44:22,726 - INFO - []
+2024-09-18 12:44:22,809 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:44:23,482 - INFO - Websocket connected
+2024-09-18 12:44:23,483 - INFO - ### opened ###
+2024-09-18 12:50:43,271 - INFO - getting last buy orders
+2024-09-18 12:50:43,369 - INFO - Weighted average price: 0
+2024-09-18 12:50:43,369 - INFO - buy orders
+2024-09-18 12:50:43,369 - INFO - []
+2024-09-18 12:50:43,452 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 12:50:44,042 - INFO - Websocket connected
+2024-09-18 12:50:44,043 - INFO - ### opened ###
+2024-09-18 13:11:36,205 - INFO - getting last buy orders
+2024-09-18 13:11:36,293 - INFO - Weighted average price: 0
+2024-09-18 13:11:36,293 - INFO - buy orders
+2024-09-18 13:11:36,293 - INFO - []
+2024-09-18 13:11:36,374 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 13:11:37,011 - INFO - Websocket connected
+2024-09-18 13:11:37,012 - INFO - ### opened ###
+2024-09-18 13:13:05,283 - INFO - getting last buy orders
+2024-09-18 13:13:05,367 - INFO - Weighted average price: 0
+2024-09-18 13:13:05,367 - INFO - buy orders
+2024-09-18 13:13:05,368 - INFO - []
+2024-09-18 13:13:05,450 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 13:13:06,041 - INFO - Websocket connected
+2024-09-18 13:13:06,041 - INFO - ### opened ###
+2024-09-18 13:17:53,958 - INFO - getting last buy orders
+2024-09-18 13:17:54,058 - INFO - Weighted average price: 0
+2024-09-18 13:17:54,059 - INFO - buy orders
+2024-09-18 13:17:54,059 - INFO - []
+2024-09-18 13:17:54,141 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 13:17:54,774 - INFO - Websocket connected
+2024-09-18 13:17:54,774 - INFO - ### opened ###
+2024-09-18 13:18:57,382 - INFO - getting last buy orders
+2024-09-18 13:18:57,487 - INFO - Weighted average price: 0
+2024-09-18 13:18:57,488 - INFO - buy orders
+2024-09-18 13:18:57,488 - INFO - []
+2024-09-18 13:18:57,570 - INFO - 0.00017783 btc balance is greater than min notional
+2024-09-18 13:18:58,248 - INFO - Websocket connected
+2024-09-18 13:18:58,249 - INFO - ### opened ###
+2024-09-19 09:16:50,732 - INFO - getting last buy orders
+2024-09-19 09:16:50,825 - INFO - Weighted average price: 0.0
+2024-09-19 09:16:50,825 - INFO - buy orders
+2024-09-19 09:16:50,825 - INFO - [{'price': 0.0, 'quantity': 0.00059, 'dateFilled': 1726756887696}]
+2024-09-19 09:16:50,904 - INFO - 0.00076783 btc balance is greater than min notional
+2024-09-19 09:16:51,486 - INFO - Websocket connected
+2024-09-19 09:16:51,487 - INFO - ### opened ###
