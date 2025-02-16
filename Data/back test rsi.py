@@ -119,7 +119,7 @@ print(combined_data.head(10))
 
 max_profit_loss = -10000000000000000000
 
-RSI_THRESHOLD = 20  # Define the RSI threshold
+RSI_THRESHOLD = 30  # Define the RSI threshold
 
 if True:
     exit_profit = 500
@@ -134,26 +134,29 @@ if True:
     print(exit_profit)
     
     for i in range(1, len(combined_data)):  # Start from 1 to avoid indexing issues
-        # current_time = combined_data['DateClosed'].iloc[i].tz_convert(pst)
-        # if (current_time.hour == 14 and current_time.minute >= 0 and current_time.minute < 60) or \
-        #    (current_time.weekday() == 4 and current_time.hour >= 14) or \
-        #    (current_time.weekday() == 5) or \
-        #    (current_time.weekday() == 6 and current_time.hour < 14):
-        #     continue  # Skip trading during the specified times
+        current_time = combined_data['DateClosed'].iloc[i].tz_convert(pst)
+        if (current_time.hour == 14 and current_time.minute >= 0 and current_time.minute < 60) or \
+           (current_time.weekday() == 4 and current_time.hour >= 14) or \
+           (current_time.weekday() == 5) or \
+           (current_time.weekday() == 6 and current_time.hour < 14):
+            continue  # Skip trading during the specified times
+        
         fee =  (combined_data['Close'].iloc[i] * .001)
 
         if position is None:
             # Check that mean is defined and that the price is below the mean - std_dev
             if pd.notnull(combined_data['mean_price'].iloc[i]) and pd.notnull(combined_data['std_dev'].iloc[i]):
                 
-                if (combined_data['Close'].iloc[i] < combined_data['mean_price'].iloc[i] - combined_data['std_dev'].iloc[i] ):
+                if combined_data['rsi'].iloc[i] < RSI_THRESHOLD:
+                #if (combined_data['Close'].iloc[i] < combined_data['mean_price'].iloc[i] - combined_data['std_dev'].iloc[i] ):
                 #if combined_data['rsi'].iloc[i] < RSI_THRESHOLD and combined_data['macd'].iloc[i] > combined_data['macd_signal'].iloc[i] and combined_data['Close'].iloc[i] < combined_data['lower_band'].iloc[i]:
                     position = 'long'
                     entry_price = combined_data['Close'].iloc[i]
                     entry_time = combined_data['DateClosed'].iloc[i]
                     averaged_down = False  # Reset averaged down flag for new position
-                    
-                elif combined_data['Close'].iloc[i] > combined_data['mean_price'].iloc[i] + combined_data['std_dev'].iloc[i]:
+                 
+                elif combined_data['rsi'].iloc[i] > (100 - RSI_THRESHOLD):    
+                #elif combined_data['Close'].iloc[i] > combined_data['mean_price'].iloc[i] + combined_data['std_dev'].iloc[i]:
                 #elif combined_data['rsi'].iloc[i] > (100 - RSI_THRESHOLD) and combined_data['macd'].iloc[i] < combined_data['macd_signal'].iloc[i] and combined_data['Close'].iloc[i] > combined_data['upper_band'].iloc[i]:
                     position = 'short'
                     entry_price = combined_data['Close'].iloc[i]
@@ -173,12 +176,17 @@ if True:
                     'exit_price': combined_data['Close'].iloc[i],
                     'profit': gain,
                 })
+                
             elif combined_data['Close'].iloc[i] >= entry_price + exit_loss:
                 if not averaged_down:
                     # Average down
                     entry_price = (entry_price + combined_data['Close'].iloc[i]) / 2
                     averaged_down = True
                 else:
+                    
+                    if( averaged_down) :
+                        fee = fee * 1.5
+                    
                     position = None
                     loss = entry_price - combined_data['Close'].iloc[i] - fee
                     profit_loss += loss  # Update profit/loss
@@ -209,6 +217,10 @@ if True:
                     averaged_down = True
                 else:
                     position = None
+                    
+                    if( averaged_down) :
+                        fee = fee * 1.5
+                    
                     loss = combined_data['Close'].iloc[i] - entry_price - fee
                     profit_loss += loss  # Update profit/loss
                     trades.append({
