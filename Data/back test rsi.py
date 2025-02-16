@@ -15,6 +15,32 @@ def statistical_analysis(data, window=24*60):  # 24 hours * 60 minutes
     return data
 
 
+# Define the RSI calculation function
+def calculate_rsi(data, window=14):
+    delta = data['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+
+# Define the MACD calculation function
+def calculate_macd(data, short_window=12, long_window=26, signal_window=9):
+    short_ema = data['Close'].ewm(span=short_window, adjust=False).mean()
+    long_ema = data['Close'].ewm(span=long_window, adjust=False).mean()
+    macd = short_ema - long_ema
+    signal = macd.ewm(span=signal_window, adjust=False).mean()
+    return macd, signal
+
+# Define the Bollinger Bands calculation function
+def calculate_bollinger_bands(data, window=20, num_std_dev=2):
+    rolling_mean = data['Close'].rolling(window=window).mean()
+    rolling_std = data['Close'].rolling(window=window).std()
+    upper_band = rolling_mean + (rolling_std * num_std_dev)
+    lower_band = rolling_mean - (rolling_std * num_std_dev)
+    return upper_band, lower_band
+
+
 # Directory containing the data files
 data_dir = 'Data'
 
@@ -53,7 +79,26 @@ combined_data.reset_index(drop=True, inplace=True)
 # Perform statistical analysis
 combined_data = statistical_analysis(combined_data)
 
+# Calculate RSI
+combined_data['rsi'] = calculate_rsi(combined_data)
 
+# Calculate MACD
+combined_data['macd'], combined_data['macd_signal'] = calculate_macd(combined_data)
+
+# Calculate Bollinger Bands
+combined_data['upper_band'], combined_data['lower_band'] = calculate_bollinger_bands(combined_data)
+
+# Function to analyze the probabilities of up days and down days
+def analyze_day_probabilities(data):
+    data['DayOfWeek'] = data['DateClosed'].dt.day_name()
+    data['DailyChange'] = data['Close'].diff()
+    day_probabilities = data.groupby('DayOfWeek')['DailyChange'].apply(lambda x: (x > 0).mean())
+    return day_probabilities
+
+# Analyze day probabilities
+day_probabilities = analyze_day_probabilities(combined_data)
+print("Probabilities of each day of the week being an up day:")
+print(day_probabilities)
 
 # Define the timezone for PST
 pst = pytz.timezone('US/Pacific')
@@ -74,88 +119,69 @@ print(combined_data.head(10))
 
 max_profit_loss = -10000000000000000000
 
-for exit_loss in range(150, 2000, 100):
+RSI_THRESHOLD = 20  # Define the RSI threshold
+
+if True:
+    exit_profit = 500
+    exit_loss = 400
     
-    print(exit_loss)
-        
-    for exit_profit in range(150, 2000, 100):
+    profit_loss = 0
+    entry_price = 0
+    position = None
+    trades = []
+    averaged_down = False  # Track if we have averaged down
     
-        profit_loss = 0
-        entry_price = 0
-        position = None
-        trades = []
-                
-        print (exit_profit)
-      
-        
-        for i in range(1, len(combined_data)):  # Start from 1 to avoid indexing issues
-            
-            current_time = combined_data['DateClosed'].iloc[i].tz_convert(pst)
-            if (current_time.hour == 14 and current_time.minute >= 0 and current_time.minute < 60) or \
-            (current_time.weekday() == 4 and current_time.hour >= 14) or \
-            (current_time.weekday() == 5) or \
-            (current_time.weekday() == 6 and current_time.hour < 14):
-                continue  # Skip trading during the specified times
-
-
-            if position is None:
-                
-                fee = (combined_data['Close'].iloc[i] * .001)
-                
-                #check that mean is defined and that the price is below the mean - std_dev
-                if pd.notnull(combined_data['mean_price'].iloc[i]) and pd.notnull(combined_data['std_dev'].iloc[i]):
-                    if combined_data['Close'].iloc[i] < (combined_data['mean_price'].iloc[i] - combined_data['std_dev'].iloc[i]):
+    print(exit_profit)
     
-                        #print(f"Buying at {combined_data['Close'].iloc[i]} on {combined_data['DateClosed'].iloc[i]}")
-                        #print(f"\tMean price yesterday {combined_data['mean_price'].iloc[i]} std dev {combined_data['std_dev'].iloc[i]}"  )
-                        #print(f"\tHigh {combined_data['high_24h'].iloc[i]} Low {combined_data['low_24h'].iloc[i]}" )
-                                         
-                        position = 'long'
-                        entry_price = combined_data['Close'].iloc[i] 
-                        entry_time = combined_data['DateClosed'].iloc[i]
+    for i in range(1, len(combined_data)):  # Start from 1 to avoid indexing issues
+        # current_time = combined_data['DateClosed'].iloc[i].tz_convert(pst)
+        # if (current_time.hour == 14 and current_time.minute >= 0 and current_time.minute < 60) or \
+        #    (current_time.weekday() == 4 and current_time.hour >= 14) or \
+        #    (current_time.weekday() == 5) or \
+        #    (current_time.weekday() == 6 and current_time.hour < 14):
+        #     continue  # Skip trading during the specified times
+        fee =  (combined_data['Close'].iloc[i] * .001)
 
-                        
-                    elif combined_data['Close'].iloc[i] > (combined_data['mean_price'].iloc[i] + combined_data['std_dev'].iloc[i]):
-
-                        #print(f"Selling Short at {combined_data['Close'].iloc[i]} on {combined_data['DateClosed'].iloc[i]}")
-                        #print(f"\tMean price yesterday {combined_data['mean_price'].iloc[i]} std dev {combined_data['std_dev'].iloc[i]}"  )
-                        #print(f"\thigh {combined_data['high_24h'].iloc[i]} low {combined_data['low_24h'].iloc[i]}" )
-
-                        position = 'short'
-                        entry_price = combined_data['Close'].iloc[i] 
-                        entry_time = combined_data['DateClosed'].iloc[i]
-
-                 
-            elif position == 'short':
+        if position is None:
+            # Check that mean is defined and that the price is below the mean - std_dev
+            if pd.notnull(combined_data['mean_price'].iloc[i]) and pd.notnull(combined_data['std_dev'].iloc[i]):
                 
-                if combined_data['Close'].iloc[i] <= entry_price - exit_profit:
-                    #print(f"\tClosing at {combined_data['Close'].iloc[i]} on {combined_data['DateClosed'].iloc[i]}")
-                    #print(f"\tlength {(combined_data['DateClosed'].iloc[i] - entry_time).total_seconds() / 60.0} minutes")
+                if (combined_data['Close'].iloc[i] < combined_data['mean_price'].iloc[i] - combined_data['std_dev'].iloc[i] ):
+                #if combined_data['rsi'].iloc[i] < RSI_THRESHOLD and combined_data['macd'].iloc[i] > combined_data['macd_signal'].iloc[i] and combined_data['Close'].iloc[i] < combined_data['lower_band'].iloc[i]:
+                    position = 'long'
+                    entry_price = combined_data['Close'].iloc[i]
+                    entry_time = combined_data['DateClosed'].iloc[i]
+                    averaged_down = False  # Reset averaged down flag for new position
+                    
+                elif combined_data['Close'].iloc[i] > combined_data['mean_price'].iloc[i] + combined_data['std_dev'].iloc[i]:
+                #elif combined_data['rsi'].iloc[i] > (100 - RSI_THRESHOLD) and combined_data['macd'].iloc[i] < combined_data['macd_signal'].iloc[i] and combined_data['Close'].iloc[i] > combined_data['upper_band'].iloc[i]:
+                    position = 'short'
+                    entry_price = combined_data['Close'].iloc[i]
+                    entry_time = combined_data['DateClosed'].iloc[i]
+                    averaged_down = False  # Reset averaged down flag for new position
+                    
 
-                    position = None  # Reset position after selling
-                    gain = entry_price - combined_data['Close'].iloc[i]  - fee  #fees  # Update profit/loss
-                    profit_loss +=  gain
-                    
-                    #print(f"GAIN Short {gain} , current profit_loss {profit_loss} " )
-                    
-                    trades.append({
-                        'entry_time': entry_time,
-                        'exit_time': combined_data['DateClosed'].iloc[i],
-                        'entry_price': entry_price,
-                        'exit_price': combined_data['Close'].iloc[i],
-                        'profit': gain,
-                    })
-                    
-                elif combined_data['Close'].iloc[i] >= entry_price + exit_loss:
-                    #print(f"\tClosing at {combined_data['Close'].iloc[i]} on {combined_data['DateClosed'].iloc[i]}")
-                    #print(f"\tlength {(combined_data['DateClosed'].iloc[i] - entry_time).total_seconds() / 60.0} minutes")
-
+        elif position == 'short':
+            if combined_data['Close'].iloc[i] <= entry_price - exit_profit:
+                position = None  # Reset position after selling
+                gain = entry_price - combined_data['Close'].iloc[i] - fee  # Update profit/loss
+                profit_loss += gain
+                trades.append({
+                    'entry_time': entry_time,
+                    'exit_time': combined_data['DateClosed'].iloc[i],
+                    'entry_price': entry_price,
+                    'exit_price': combined_data['Close'].iloc[i],
+                    'profit': gain,
+                })
+            elif combined_data['Close'].iloc[i] >= entry_price + exit_loss:
+                if not averaged_down:
+                    # Average down
+                    entry_price = (entry_price + combined_data['Close'].iloc[i]) / 2
+                    averaged_down = True
+                else:
                     position = None
                     loss = entry_price - combined_data['Close'].iloc[i] - fee
-                    profit_loss += loss     # Update profit/loss
-                    
-                    #print(f"LOSS Short {loss} , current profit_loss {profit_loss} " )
-                    
+                    profit_loss += loss  # Update profit/loss
                     trades.append({
                         'entry_time': entry_time,
                         'exit_time': combined_data['DateClosed'].iloc[i],
@@ -163,40 +189,28 @@ for exit_loss in range(150, 2000, 100):
                         'exit_price': combined_data['Close'].iloc[i],
                         'profit': loss,
                     })
-                                                
-            elif position == 'long':
-                
-                if combined_data['Close'].iloc[i] >= entry_price + exit_profit:
-                    
-                    #print(f"\tClosing at {combined_data['Close'].iloc[i]} on {combined_data['DateClosed'].iloc[i]}")
-                    #print(f"\tlength {(combined_data['DateClosed'].iloc[i] - entry_time).total_seconds() / 60.0} minutes")
-                        
-                    position = None  # Reset position after selling
-                    gain = combined_data['Close'].iloc[i] - entry_price - fee #fees  # Update profit/loss
-                    profit_loss += gain    #fees  # Update profit/loss
-                    
-                    #print(f"GAIN Long {gain} , current profit_loss {profit_loss} " )
-                    
-                    trades.append({
-                        'entry_time': entry_time,
-                        'exit_time': combined_data['DateClosed'].iloc[i],
-                        'entry_price': entry_price,
-                        'exit_price': combined_data['Close'].iloc[i],
-                        'profit': gain,
-                    })
-                    
-                    
-                elif combined_data['Close'].iloc[i] <= entry_price - exit_loss:
-                    
-                    #print(f"\tClosing at {combined_data['Close'].iloc[i]} on {combined_data['DateClosed'].iloc[i]}")
-                    #print(f"\tlength {(combined_data['DateClosed'].iloc[i] - entry_time).total_seconds() / 60.0} minutes")
 
+        elif position == 'long':
+            if combined_data['Close'].iloc[i] >= entry_price + exit_profit:
+                position = None  # Reset position after selling
+                gain = combined_data['Close'].iloc[i] - entry_price - fee  # Update profit/loss
+                profit_loss += gain
+                trades.append({
+                    'entry_time': entry_time,
+                    'exit_time': combined_data['DateClosed'].iloc[i],
+                    'entry_price': entry_price,
+                    'exit_price': combined_data['Close'].iloc[i],
+                    'profit': gain,
+                })
+            elif combined_data['Close'].iloc[i] <= entry_price - exit_loss:
+                if not averaged_down:
+                    # Average down
+                    entry_price = (entry_price + combined_data['Close'].iloc[i]) / 2
+                    averaged_down = True
+                else:
                     position = None
-                    loss =  combined_data['Close'].iloc[i] - entry_price - fee  # Update profit/loss
-                    profit_loss += loss   # Update profit/loss
-                    
-                    #print(f"LOSS Long {loss} , current profit_loss {profit_loss} " )
-                    
+                    loss = combined_data['Close'].iloc[i] - entry_price - fee
+                    profit_loss += loss  # Update profit/loss
                     trades.append({
                         'entry_time': entry_time,
                         'exit_time': combined_data['DateClosed'].iloc[i],
@@ -204,18 +218,15 @@ for exit_loss in range(150, 2000, 100):
                         'exit_price': combined_data['Close'].iloc[i],
                         'profit': loss,
                     })
-                    
-                    
-        # Print the final profit/loss
-        print(f"Final Profit/Loss {profit_loss}  after adjusting positions  : {(profit_loss * .01   )}  Exit Profit {exit_profit} Exit Loss {exit_loss}  Trades {len(trades)}")
-        
-        
-        if profit_loss >= max_profit_loss:
-            max_profit_loss = profit_loss
-            best_profit = exit_profit
-            best_trades = trades.copy()
-            
-            
+
+    # Print the final profit/loss
+    print(f"Final Profit/Loss {profit_loss}  after adjusting positions  : {(profit_loss * .01   )}  Exit Profit {exit_profit} Exit Loss {exit_loss}  Trades {len(trades)}")
+    
+    if profit_loss >= max_profit_loss:
+        max_profit_loss = profit_loss
+        best_profit = exit_profit
+        best_trades = trades.copy()
+
 #print data start date and end date
 print(f"Data from {combined_data['DateClosed'].iloc[0]} to {combined_data['DateClosed'].iloc[-1]}")
 print(f"Max Profit/Loss at 100 positions : {max_profit_loss} adjusted for 1 positions : {max_profit_loss * .01 } ")
